@@ -105,6 +105,52 @@ def reset_filter():
     update_book_list()
 
 
+# Функция удаления книги
+def delete_book():
+    selection = book_listbox.curselection()
+    if not selection:
+        messagebox.showwarning("Внимание", "Выберите книгу для удаления!")
+        return
+    
+    index = selection[0]
+    # Определяем, какой список используется (отфильтрованный или обычный)
+    genre_filter = genre_filter_var.get()
+    pages_filter = pages_filter_var.get()
+    
+    if genre_filter != "Все" or pages_filter != "Все":
+        # При фильтрации нужно найти книгу в основном списке
+        filtered_books = books[:]
+        if genre_filter != "Все":
+            filtered_books = [b for b in filtered_books if b['genre'] == genre_filter]
+        if pages_filter == ">200":
+            filtered_books = [b for b in filtered_books if b['pages'] > 200]
+        elif pages_filter == ">300":
+            filtered_books = [b for b in filtered_books if b['pages'] > 300]
+        elif pages_filter == ">500":
+            filtered_books = [b for b in filtered_books if b['pages'] > 500]
+        
+        book_to_delete = filtered_books[index]
+        books.remove(book_to_delete)
+    else:
+        books.pop(index)
+    
+    update_book_list()
+    messagebox.showinfo("Успех", "Книга удалена!")
+
+
+# Функция очистки всех книг
+def clear_all_books():
+    if not books:
+        messagebox.showinfo("Информация", "Список книг пуст!")
+        return
+    
+    confirm = messagebox.askyesno("Подтверждение", "Вы уверены, что хотите удалить ВСЕ книги?")
+    if confirm:
+        books.clear()
+        update_book_list()
+        messagebox.showinfo("Успех", "Все книги удалены!")
+
+
 # Главное окно
 root = tk.Tk()
 root.title("Book Tracker - Трекер прочитанных книг")
@@ -157,6 +203,12 @@ btn_save.pack(side=tk.LEFT, padx=5)
 
 btn_load = tk.Button(btn_frame, text="Загрузить из JSON", bg="#9C27B0", fg="white", command=load_data)
 btn_load.pack(side=tk.LEFT, padx=5)
+
+btn_delete = tk.Button(btn_frame, text="Удалить выбранную", bg="#F44336", fg="white", command=delete_book)
+btn_delete.pack(side=tk.LEFT, padx=5)
+
+btn_clear_all = tk.Button(btn_frame, text="Очистить всё", bg="#FF5722", fg="white", command=clear_all_books)
+btn_clear_all.pack(side=tk.LEFT, padx=5)
 
 # Фрейм для фильтров
 filter_frame = tk.LabelFrame(root, text="Фильтры", font=("Arial", 12))
