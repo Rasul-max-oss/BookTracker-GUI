@@ -43,6 +43,10 @@ tk.Label(input_frame, text="Количество страниц:").grid(row=3, c
 entry_pages = tk.Entry(input_frame, width=40)
 entry_pages.grid(row=3, column=1, padx=10, pady=5)
 
+# Кнопка добавления книги
+btn_add = tk.Button(input_frame, text="Добавить книгу", font=("Arial", 11), bg="#4CAF50", fg="white")
+btn_add.grid(row=4, column=0, columnspan=2, pady=10)
+
 # Фрейм для фильтров
 filter_frame = tk.LabelFrame(root, text="Фильтры", font=("Arial", 12))
 filter_frame.pack(pady=10, padx=20, fill="x")
@@ -53,7 +57,26 @@ tk.Label(filter_frame, text="Фильтры будут здесь").pack(pady=10
 table_frame = tk.Frame(root)
 table_frame.pack(pady=10, padx=20, fill="both", expand=True)
 
-tk.Label(table_frame, text="Таблица книг будет здесь").pack(pady=20)
+# Таблица для отображения книг
+tree = ttk.Treeview(table_frame, columns=("title", "author", "genre", "pages"), show="headings")
+
+# Настройка колонок
+tree.heading("title", text="Название")
+tree.heading("author", text="Автор")
+tree.heading("genre", text="Жанр")
+tree.heading("pages", text="Кол-во страниц")
+
+tree.column("title", width=200)
+tree.column("author", width=150)
+tree.column("genre", width=130)
+tree.column("pages", width=100)
+
+# Полоса прокрутки
+scrollbar = ttk.Scrollbar(table_frame, orient=tk.VERTICAL, command=tree.yview)
+tree.configure(yscrollcommand=scrollbar.set)
+
+tree.pack(side=tk.LEFT, fill="both", expand=True)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 # Запуск приложения
 root.mainloop()
