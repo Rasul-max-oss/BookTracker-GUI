@@ -53,29 +53,18 @@ filter_frame.pack(pady=10, padx=20, fill="x")
 
 tk.Label(filter_frame, text="Фильтры будут здесь").pack(pady=10)
 
-# Фрейм для таблицы книг
-table_frame = tk.Frame(root)
-table_frame.pack(pady=10, padx=20, fill="both", expand=True)
+# Фрейм для списка книг
+list_frame = tk.Frame(root)
+list_frame.pack(pady=10, padx=20, fill="both", expand=True)
 
-# Таблица для отображения книг
-tree = ttk.Treeview(table_frame, columns=("title", "author", "genre", "pages"), show="headings")
-
-# Настройка колонок
-tree.heading("title", text="Название")
-tree.heading("author", text="Автор")
-tree.heading("genre", text="Жанр")
-tree.heading("pages", text="Кол-во страниц")
-
-tree.column("title", width=200)
-tree.column("author", width=150)
-tree.column("genre", width=130)
-tree.column("pages", width=100)
+# Список для отображения книг
+book_listbox = tk.Listbox(list_frame, font=("Arial", 11), height=15)
 
 # Полоса прокрутки
-scrollbar = ttk.Scrollbar(table_frame, orient=tk.VERTICAL, command=tree.yview)
-tree.configure(yscrollcommand=scrollbar.set)
+scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=book_listbox.yview)
+book_listbox.configure(yscrollcommand=scrollbar.set)
 
-tree.pack(side=tk.LEFT, fill="both", expand=True)
+book_listbox.pack(side=tk.LEFT, fill="both", expand=True)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 # Запуск приложения
