@@ -2,6 +2,33 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import json
 import os
+from datetime import datetime
+
+DATA_FILE = "books_data.json"
+
+
+# Функция сохранения данных в JSON
+def save_data():
+    try:
+        with open(DATA_FILE, "w", encoding="utf-8") as f:
+            json.dump(books, f, ensure_ascii=False, indent=2)
+        messagebox.showinfo("Успех", "Данные сохранены в файл!")
+    except Exception as e:
+        messagebox.showerror("Ошибка", f"Не удалось сохранить данные:\n{e}")
+
+
+# Функция загрузки данных из JSON
+def load_data():
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                books.extend(data)
+                update_book_list()
+            if data:
+                messagebox.showinfo("Успех", f"Загружено {len(data)} книг!")
+        except Exception as e:
+            messagebox.showerror("Ошибка", f"Не удалось загрузить данные:\n{e}")
 
 
 # Функция добавления книги
@@ -120,6 +147,16 @@ entry_pages.grid(row=3, column=1, padx=10, pady=5)
 # Кнопка добавления книги
 btn_add = tk.Button(input_frame, text="Добавить книгу", font=("Arial", 11), bg="#4CAF50", fg="white", command=add_book)
 btn_add.grid(row=4, column=0, columnspan=2, pady=10)
+
+# Кнопки сохранения и загрузки
+btn_frame = tk.Frame(input_frame)
+btn_frame.grid(row=5, column=0, columnspan=2, pady=5)
+
+btn_save = tk.Button(btn_frame, text="Сохранить в JSON", bg="#9C27B0", fg="white", command=save_data)
+btn_save.pack(side=tk.LEFT, padx=5)
+
+btn_load = tk.Button(btn_frame, text="Загрузить из JSON", bg="#9C27B0", fg="white", command=load_data)
+btn_load.pack(side=tk.LEFT, padx=5)
 
 # Фрейм для фильтров
 filter_frame = tk.LabelFrame(root, text="Фильтры", font=("Arial", 12))
