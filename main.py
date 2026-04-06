@@ -40,11 +40,42 @@ def add_book():
 
 
 # Функция обновления списка
-def update_book_list():
+def update_book_list(book_list=None):
     book_listbox.delete(0, tk.END)
-    for i, book in enumerate(books, 1):
+    if book_list is None:
+        book_list = books
+    for i, book in enumerate(book_list, 1):
         entry = f"{i}. '{book['title']}' - {book['author']}, {book['genre']}, {book['pages']} стр."
         book_listbox.insert(tk.END, entry)
+
+
+# Функция фильтрации
+def apply_filter():
+    genre_filter = genre_filter_var.get()
+    pages_filter = pages_filter_var.get()
+    
+    filtered_books = books[:]
+    
+    # Фильтр по жанру
+    if genre_filter != "Все":
+        filtered_books = [b for b in filtered_books if b['genre'] == genre_filter]
+    
+    # Фильтр по количеству страниц
+    if pages_filter == ">200":
+        filtered_books = [b for b in filtered_books if b['pages'] > 200]
+    elif pages_filter == ">300":
+        filtered_books = [b for b in filtered_books if b['pages'] > 300]
+    elif pages_filter == ">500":
+        filtered_books = [b for b in filtered_books if b['pages'] > 500]
+    
+    update_book_list(filtered_books)
+
+
+# Функция сброса фильтров
+def reset_filter():
+    combo_genre_filter.current(0)
+    combo_pages_filter.current(0)
+    update_book_list()
 
 
 # Главное окно
@@ -94,7 +125,28 @@ btn_add.grid(row=4, column=0, columnspan=2, pady=10)
 filter_frame = tk.LabelFrame(root, text="Фильтры", font=("Arial", 12))
 filter_frame.pack(pady=10, padx=20, fill="x")
 
-tk.Label(filter_frame, text="Фильтры будут здесь").pack(pady=10)
+# Фильтр по жанру
+tk.Label(filter_frame, text="По жанру:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+genre_filter_var = tk.StringVar()
+genre_filter_list = ["Все", "Роман", "Фантастика", "Детектив", "Научная литература", "Поэзия", "Биография", "Фэнтези", "Другое"]
+combo_genre_filter = ttk.Combobox(filter_frame, textvariable=genre_filter_var, values=genre_filter_list, width=25, state="readonly")
+combo_genre_filter.grid(row=0, column=1, padx=10, pady=5)
+combo_genre_filter.current(0)
+
+# Фильтр по страницам
+tk.Label(filter_frame, text="По страницам:").grid(row=0, column=2, padx=10, pady=5, sticky="w")
+pages_filter_var = tk.StringVar()
+pages_filter_options = ["Все", ">200", ">300", ">500"]
+combo_pages_filter = ttk.Combobox(filter_frame, textvariable=pages_filter_var, values=pages_filter_options, width=10, state="readonly")
+combo_pages_filter.grid(row=0, column=3, padx=10, pady=5)
+combo_pages_filter.current(0)
+
+# Кнопки фильтров
+btn_filter = tk.Button(filter_frame, text="Применить фильтр", bg="#2196F3", fg="white", command=apply_filter)
+btn_filter.grid(row=0, column=4, padx=5, pady=5)
+
+btn_reset = tk.Button(filter_frame, text="Сбросить", bg="#FF9800", fg="white", command=reset_filter)
+btn_reset.grid(row=0, column=5, padx=5, pady=5)
 
 # Фрейм для списка книг
 list_frame = tk.Frame(root)
