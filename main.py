@@ -4,6 +4,49 @@ import json
 import os
 
 
+# Функция добавления книги
+def add_book():
+    title = entry_title.get().strip()
+    author = entry_author.get().strip()
+    genre = genre_var.get()
+    pages = entry_pages.get().strip()
+
+    # Проверка пустых полей
+    if not title or not author or not pages:
+        messagebox.showwarning("Внимание", "Все поля должны быть заполнены!")
+        return
+
+    # Проверка количества страниц на число
+    if not pages.isdigit():
+        messagebox.showwarning("Внимание", "Количество страниц должно быть числом!")
+        return
+
+    pages = int(pages)
+
+    # Добавление книги в список
+    book = {"title": title, "author": author, "genre": genre, "pages": pages}
+    books.append(book)
+
+    # Обновление списка на экране
+    update_book_list()
+
+    # Очистка полей
+    entry_title.delete(0, tk.END)
+    entry_author.delete(0, tk.END)
+    entry_pages.delete(0, tk.END)
+    combo_genre.current(0)
+
+    messagebox.showinfo("Успех", f"Книга '{title}' добавлена!")
+
+
+# Функция обновления списка
+def update_book_list():
+    book_listbox.delete(0, tk.END)
+    for i, book in enumerate(books, 1):
+        entry = f"{i}. '{book['title']}' - {book['author']}, {book['genre']}, {book['pages']} стр."
+        book_listbox.insert(tk.END, entry)
+
+
 # Главное окно
 root = tk.Tk()
 root.title("Book Tracker - Трекер прочитанных книг")
@@ -33,8 +76,8 @@ entry_author.grid(row=1, column=1, padx=10, pady=5)
 # Поле: Жанр
 tk.Label(input_frame, text="Жанр:").grid(row=2, column=0, padx=10, pady=5, sticky="w")
 genre_var = tk.StringVar()
-genres = ["Роман", "Фантастика", "Детектив", "Научная литература", "Поэзия", "Биография", "Фэнтези", "Другое"]
-combo_genre = ttk.Combobox(input_frame, textvariable=genre_var, values=genres, width=37, state="readonly")
+genre_list = ["Роман", "Фантастика", "Детектив", "Научная литература", "Поэзия", "Биография", "Фэнтези", "Другое"]
+combo_genre = ttk.Combobox(input_frame, textvariable=genre_var, values=genre_list, width=37, state="readonly")
 combo_genre.grid(row=2, column=1, padx=10, pady=5)
 combo_genre.current(0)
 
@@ -44,7 +87,7 @@ entry_pages = tk.Entry(input_frame, width=40)
 entry_pages.grid(row=3, column=1, padx=10, pady=5)
 
 # Кнопка добавления книги
-btn_add = tk.Button(input_frame, text="Добавить книгу", font=("Arial", 11), bg="#4CAF50", fg="white")
+btn_add = tk.Button(input_frame, text="Добавить книгу", font=("Arial", 11), bg="#4CAF50", fg="white", command=add_book)
 btn_add.grid(row=4, column=0, columnspan=2, pady=10)
 
 # Фрейм для фильтров
